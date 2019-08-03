@@ -41,7 +41,7 @@ def navigate_config(device_name):
            print(dir(device_config.ip.dhcp.snooping))
 
 
-navigate_config('router0')
+navigate_config('router1')
 
 def change_config_hostname(device_name):
     """
