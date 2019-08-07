@@ -1,0 +1,68 @@
+module project02 {
+  namespace "http://com/example/project02";
+  prefix project02;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import tailf-ned-cisco-ios { 
+    prefix ios; 
+  }
+  augment "/ncs:services" {
+    list project02 {
+      key name;
+
+      uses ncs:service-data;
+      ncs:servicepoint "project02";
+
+      leaf name {
+        type string;
+      }
+
+      // may replace this with other ways of refering to the devices.
+      leaf device {
+        type leafref {
+          path "/ncs:devices/ncs:device/ncs:name";
+        }
+      }
+
+      container ios {
+        when "/ncs:devices/ncs:device[ncs:name=current()/../device]/ncs:device-type/ncs:cli/ncs:ned-id='cisco-ios-cli-6.33:cisco-ios-cli-6.33'";
+        tailf:cli-drop-node-name;
+
+        list intf {
+          key intf_id;
+
+          leaf intf_id {
+            tailf:info "Interface ID";
+            type leafref {
+              path "deref(../../../device)/../ncs:config/ios:interface/ios:FastEthernet/ios:name";
+            }
+          }
+          leaf descr {
+            type string;
+          }
+          leaf duplex {
+            type string;
+          }      
+          leaf mtu {
+            type uint32;
+          }    
+          leaf address {
+            type string;
+          }
+          leaf mask {
+            type string;
+          }
+        }
+      }
+    }
+  }
+}
